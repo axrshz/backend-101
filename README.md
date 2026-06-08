@@ -1,0 +1,11 @@
+- [x] http server
+- [ ] basic rest api
+- [ ] auth service
+- [ ] file upload & storage service
+- [ ] background jobs & async
+- [ ] caching & rate limiting
+- [ ] webhook service
+- [ ] websockets & pub/sub
+- [ ] search api
+- [ ] observability & resilience
+- [ ] deployment
