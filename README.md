@@ -1,5 +1,5 @@
 - [x] http server
-- [ ] basic rest api
+- [x] basic rest api
 - [ ] auth service
 - [ ] file upload & storage service
 - [ ] background jobs & async
