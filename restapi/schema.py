@@ -15,3 +15,27 @@ class Fruit(FruitBase):
 
     class Config:
         from_attributes = True
+
+
+class UserBase(BaseModel):
+    username: str
+    email: str
+    is_admin: bool = False
+
+class UserCreate(UserBase):
+    password: str
+
+class User(UserBase):
+    id: int
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: str | None = None
