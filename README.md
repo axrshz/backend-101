@@ -1,11 +1,12 @@
 - [x] http server
 - [x] basic rest api
-- [ ] auth service
-- [ ] file upload & storage service
+- [x] authentication & authorization
+- [ ] file uploads & storage
 - [ ] background jobs & async
-- [ ] caching & rate limiting
-- [ ] webhook service
+- [ ] caching
+- [ ] rate limiting
+- [ ] webhooks
 - [ ] websockets & pub/sub
-- [ ] search api
+- [ ] search
 - [ ] observability & resilience
 - [ ] deployment
