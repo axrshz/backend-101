@@ -76,26 +76,42 @@ app.post("/images", async (c) => {
   }
 });
 
-app.post("/images/:id", async (c) => {
-  const { id } = c.req.param();
+app.get("/images/:id", async (c) => {
+  try {
+    const id = c.req.param("id");
+    const [image] = await db
+      .select({
+        id: images.id,
+        status: images.status,
+        resultS3Key: images.resultS3Key,
+        errorMessage: images.errorMessage,
+      })
+      .from(images)
+      .where(eq(images.id, id))
+      .limit(1);
 
-  const image = await db
-    .select()
-    .from(images)
-    .where(eq(images.id, id))
-    .limit(1)
-    .then((rows) => rows[0]);
+    if (!image) {
+      return c.json({ error: "Image not found" }, 404);
+    }
 
-  if (!image) {
-    return c.json({ error: "Image not found" }, 404);
+    const resultUrl =
+      image.status === "completed" && image.resultS3Key
+        ? s3.file(image.resultS3Key).presign({
+            method: "GET",
+            expiresIn: 60 * 60,
+          })
+        : null;
+
+    return c.json({
+      id: image.id,
+      status: image.status,
+      resultUrl,
+      errorMessage: image.status === "failed" ? image.errorMessage : null,
+    });
+  } catch (error) {
+    console.error("Image lookup error:", error);
+    return c.json({ error: "Failed to get image" }, 500);
   }
-
-  return c.json({
-    id: image.id,
-    status: image.status,
-    resultS3Key: image.resultS3Key,
-    errorMessage: image.errorMessage,
-  });
 });
 
 export default {

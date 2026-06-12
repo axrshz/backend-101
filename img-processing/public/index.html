@@ -22,6 +22,16 @@
         padding: 0.5rem 1rem;
       }
 
+      #output[hidden] {
+        display: none;
+      }
+
+      #processed-image {
+        display: block;
+        max-width: 100%;
+        margin-top: 1rem;
+      }
+
       pre {
         padding: 1rem;
         background: #f4f4f4;
@@ -40,20 +50,87 @@
         <option value="blur">Blur</option>
         <option value="webp">WebP</option>
       </select>
-      <button type="submit">Upload</button>
+      <button type="submit">Upload and process</button>
     </form>
 
-    <pre id="result">Choose an image to upload.</pre>
+    <section id="output" hidden>
+      <p><strong>Job ID:</strong> <span id="job-id"></span></p>
+      <p><strong>Status:</strong> <span id="status"></span></p>
+      <a id="result-link" href="#" target="_blank" rel="noreferrer" hidden>
+        Open processed image
+      </a>
+      <img id="processed-image" alt="Processed result" hidden />
+      <pre id="details"></pre>
+    </section>
 
     <script>
       const form = document.querySelector("#upload-form");
-      const result = document.querySelector("#result");
       const button = form.querySelector("button");
+      const output = document.querySelector("#output");
+      const jobId = document.querySelector("#job-id");
+      const status = document.querySelector("#status");
+      const resultLink = document.querySelector("#result-link");
+      const processedImage = document.querySelector("#processed-image");
+      const details = document.querySelector("#details");
+      let pollTimer;
+
+      function showResponse(data) {
+        output.hidden = false;
+        details.textContent = JSON.stringify(data, null, 2);
+      }
+
+      function stopPolling() {
+        clearTimeout(pollTimer);
+        pollTimer = undefined;
+        button.disabled = false;
+      }
+
+      async function pollImage(id) {
+        try {
+          const response = await fetch(`/images/${id}`);
+          const data = await response.json();
+
+          showResponse(data);
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to get image status");
+          }
+
+          status.textContent = data.status;
+
+          if (data.status === "completed" && data.resultUrl) {
+            resultLink.href = data.resultUrl;
+            resultLink.hidden = false;
+            processedImage.src = data.resultUrl;
+            processedImage.hidden = false;
+            stopPolling();
+            return;
+          }
+
+          if (data.status === "failed" || data.status === "deleted") {
+            stopPolling();
+            return;
+          }
+
+          pollTimer = setTimeout(() => pollImage(id), 1_000);
+        } catch (error) {
+          status.textContent = "error";
+          details.textContent = error.message;
+          stopPolling();
+        }
+      }
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
+        stopPolling();
         button.disabled = true;
-        result.textContent = "Uploading...";
+        output.hidden = false;
+        jobId.textContent = "";
+        status.textContent = "uploading";
+        resultLink.hidden = true;
+        processedImage.hidden = true;
+        processedImage.removeAttribute("src");
+        details.textContent = "Uploading original image...";
 
         try {
           const response = await fetch("/images", {
@@ -62,10 +139,18 @@
           });
           const data = await response.json();
 
-          result.textContent = JSON.stringify(data, null, 2);
+          showResponse(data);
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to create image job");
+          }
+
+          jobId.textContent = data.id;
+          status.textContent = data.status;
+          pollImage(data.id);
         } catch (error) {
-          result.textContent = `Upload failed: ${error.message}`;
-        } finally {
+          status.textContent = "error";
+          details.textContent = error.message;
           button.disabled = false;
         }
       });
