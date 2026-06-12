@@ -3,6 +3,7 @@
 - [x] authentication & authorization
 - [x] file uploads & storage
 - [x] background jobs & async
+- [x] containerization
 - [ ] caching
 - [ ] rate limiting
 - [ ] webhooks
