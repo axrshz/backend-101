@@ -1,8 +1,8 @@
 - [x] http server
 - [x] basic rest api
 - [x] authentication & authorization
-- [ ] file uploads & storage
-- [ ] background jobs & async
+- [x] file uploads & storage
+- [x] background jobs & async
 - [ ] caching
 - [ ] rate limiting
 - [ ] webhooks
