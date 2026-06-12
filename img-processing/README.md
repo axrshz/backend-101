@@ -1,6 +1,4 @@
-# Image Processing API
-
-## Docker
+### Image Processing API
 
 Create `.env` from `.env.example` and provide the S3 credentials.
 
