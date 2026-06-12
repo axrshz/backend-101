@@ -1,22 +1,11 @@
-# Image Processing API
+# Bun + Hono + PostgreSQL
 
-## Setup
-
-```powershell
-Copy-Item .env.example .env
+```sh
 docker compose up -d
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\alembic.exe upgrade head
-.\.venv\Scripts\uvicorn.exe main:app --reload
+Copy-Item .env.example .env
+bun install
+bun run db:migrate
+bun run dev
 ```
 
-API documentation: `http://127.0.0.1:8000/docs`
-
-## Migrations
-
-After changing SQLAlchemy models:
-
-```powershell
-.\.venv\Scripts\alembic.exe revision --autogenerate -m "describe change"
-.\.venv\Scripts\alembic.exe upgrade head
-```
+Open `http://localhost:3000`.
