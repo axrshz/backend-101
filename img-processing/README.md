@@ -1,17 +1,26 @@
-# Bun + Hono + PostgreSQL
+# Image Processing API
+
+## Docker
+
+Create `.env` from `.env.example` and provide the S3 credentials.
+Compose supplies the PostgreSQL and Redis URLs to the containers.
+
+Build and start the API, worker, PostgreSQL, Redis, and database migration:
 
 ```sh
-docker compose up -d
-Copy-Item .env.example .env
-bun install
-bun run db:migrate
-bun run dev
+docker compose up --build
 ```
 
 Open `http://localhost:3000`.
 
-Run the worker in a second terminal:
+Stop the services:
 
 ```sh
-bun run worker
+docker compose down
+```
+
+Remove the persisted PostgreSQL and Redis data as well:
+
+```sh
+docker compose down -v
 ```
