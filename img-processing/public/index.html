@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Upload</title>
+    <style>
+      body {
+        max-width: 36rem;
+        margin: 4rem auto;
+        padding: 0 1rem;
+        font-family: system-ui, sans-serif;
+      }
+
+      form {
+        display: grid;
+        gap: 1rem;
+      }
+
+      button {
+        width: fit-content;
+        padding: 0.5rem 1rem;
+      }
+
+      pre {
+        padding: 1rem;
+        background: #f4f4f4;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Upload image</h1>
+
+    <form id="upload-form">
+      <input type="file" name="image" accept="image/*" required />
+      <select name="operation" required>
+        <option value="grayscale">Grayscale</option>
+        <option value="sharpen">Sharpen</option>
+        <option value="blur">Blur</option>
+        <option value="webp">WebP</option>
+      </select>
+      <button type="submit">Upload</button>
+    </form>
+
+    <pre id="result">Choose an image to upload.</pre>
+
+    <script>
+      const form = document.querySelector("#upload-form");
+      const result = document.querySelector("#result");
+      const button = form.querySelector("button");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        button.disabled = true;
+        result.textContent = "Uploading...";
+
+        try {
+          const response = await fetch("/images", {
+            method: "POST",
+            body: new FormData(form),
+          });
+          const data = await response.json();
+
+          result.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+          result.textContent = `Upload failed: ${error.message}`;
+        } finally {
+          button.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

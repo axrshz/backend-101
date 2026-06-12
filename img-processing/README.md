@@ -9,3 +9,9 @@ bun run dev
 ```
 
 Open `http://localhost:3000`.
+
+Run the worker in a second terminal:
+
+```sh
+bun run worker
+```
