@@ -3,7 +3,6 @@
 ## Docker
 
 Create `.env` from `.env.example` and provide the S3 credentials.
-Compose supplies the PostgreSQL and Redis URLs to the containers.
 
 Build and start the API, worker, PostgreSQL, Redis, and database migration:
 
